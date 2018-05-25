@@ -14,11 +14,7 @@ def inception_v3_arg_scope(weight_decay=0.00001, stddev=0.1,
     batch_norm_params = {
         'decay': 0.9,
         'epsilon': 0.001,
-        # 'updates_collections': tf.GraphKeys.UPDATE_OPS,
-        # 'variables_collections': {'beta': None,
-        #                           'gamma': None,
-        #                           'moving_mean': [batch_norm_var_collection],
-        #                           'moving_variance': [batch_norm_var_collection]}
+        
     }
 
     # 利用slim.arg_scope对卷积层和全连接层赋予缺省参数'weights_regularizer'
@@ -108,23 +104,6 @@ def inception_v3_base(inputs, scope=None):
                 net = tf.concat([branch_0, branch_1, branch_2, branch_3], 3)
             # 4个分支输出合并：(35, 35, 288)
 
-            # 第三个5系模块：Mixed_5d
-            # with tf.variable_scope('Mixed_5d'):
-            #     with tf.variable_scope('Branch_0'):
-            #         branch_0 = slim.conv2d(net, 64, [1, 1], scope='Conv2d_0a_1x1')
-            #     with tf.variable_scope('Branch_1'):
-            #         branch_1 = slim.conv2d(net, 48, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_1 = slim.conv2d(branch_1, 64, [5, 5], scope='Conv2d_0b_5x5')
-            #     with tf.variable_scope('Branch_2'):
-            #         branch_2 = slim.conv2d(net, 64, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_2 = slim.conv2d(branch_2, 96, [3, 3], scope='Conv2d_0b_3x3')
-            #         branch_2 = slim.conv2d(branch_2, 96, [3, 3], scope='Conv2d_0c_3x3')
-            #     with tf.variable_scope('Branch_3'):
-            #         branch_3 = slim.avg_pool2d(net, [3, 3], scope='AvgPool_0a_3x3')
-            #         branch_3 = slim.conv2d(branch_3, 64, [1, 1], scope='Conv2d_0b_1x1')
-            #     # sum(64, 64, 96, 64)
-            #     net = tf.concat([branch_0, branch_1, branch_2, branch_3], 3)
-            # 4个分支输出合并：(35, 35, 288)
 
             # 第一个6系模块：Mixed_6a
             with tf.variable_scope('Mixed_6a'):
@@ -177,74 +156,8 @@ def inception_v3_base(inputs, scope=None):
                 net = tf.concat([branch_0, branch_1, branch_2, branch_3], 3)
             # 4个分支输出合并：(17, 17, 768)
 
-            # 第三个6系模块：Mixed_6c
-            # 基本等同与上一个6系模块, 除了分支1和分支2的前几个卷积通道数
-            # 但是最终的输出通道数任然是192
-            # with tf.variable_scope('Mixed_6c'):
-            #     with tf.variable_scope('Branch_0'):
-            #         branch_0 = slim.conv2d(net, 192, [1, 1], scope='Conv2d_0a_1x1')
-            #     with tf.variable_scope('Branch_1'):
-            #         branch_1 = slim.conv2d(net, 160, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_1 = slim.conv2d(branch_1, 160, [1, 7], scope='Conv2d_0b_1x7')
-            #         branch_1 = slim.conv2d(branch_1, 192, [7, 1], scope='Conv2d_0c_7x1')
-            #     with tf.variable_scope('Branch_2'):
-            #         branch_2 = slim.conv2d(net, 160, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_2 = slim.conv2d(branch_2, 160, [7, 1], scope='Conv2d_0b_7x1')
-            #         branch_2 = slim.conv2d(branch_2, 160, [1, 7], scope='Conv2d_0c_1x7')
-            #         branch_2 = slim.conv2d(branch_2, 160, [7, 1], scope='Conv2d_0d_7x1')
-            #         branch_2 = slim.conv2d(branch_2, 192, [1, 7], scope='Conv2d_0e_1x7')
-            #     with tf.variable_scope('Branch_3'):
-            #         branch_3 = slim.avg_pool2d(net, [3, 3], scope='AvgPool_0a_3x3')
-            #         branch_3 = slim.conv2d(branch_3, 192, [1, 1], scope='Conv2d_0b_1x1')
-            #
-            #     net = tf.concat([branch_0, branch_1, branch_2, branch_3], 3)
-            # 4个分支输出合并：(17, 17, 768)
-
-            # 第四个6系模块：Mixed_6d
-            # 和上一个6系模块完全一致，目的也是为了丰富卷积增加非线性,提炼特征
-            # with tf.variable_scope('Mixed_6d'):
-            #     with tf.variable_scope('Branch_0'):
-            #         branch_0 = slim.conv2d(net, 192, [1, 1], scope='Conv2d_0a_1x1')
-            #     with tf.variable_scope('Branch_1'):
-            #         branch_1 = slim.conv2d(net, 160, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_1 = slim.conv2d(branch_1, 160, [1, 7], scope='Conv2d_0b_1x7')
-            #         branch_1 = slim.conv2d(branch_1, 192, [7, 1], scope='Conv2d_0c_7x1')
-            #     with tf.variable_scope('Branch_2'):
-            #         branch_2 = slim.conv2d(net, 160, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_2 = slim.conv2d(branch_2, 160, [7, 1], scope='Conv2d_0b_7x1')
-            #         branch_2 = slim.conv2d(branch_2, 160, [1, 7], scope='Conv2d_0c_1x7')
-            #         branch_2 = slim.conv2d(branch_2, 160, [7, 1], scope='Conv2d_0d_7x1')
-            #         branch_2 = slim.conv2d(branch_2, 192, [1, 7], scope='Conv2d_0e_1x7')
-            #     with tf.variable_scope('Branch_3'):
-            #         branch_3 = slim.avg_pool2d(net, [3, 3], scope='AvgPool_0a_3x3')
-            #         branch_3 = slim.conv2d(branch_3, 192, [1, 1], scope='Conv2d_0b_1x1')
-            #
-            #     net = tf.concat([branch_0, branch_1, branch_2, branch_3], 3)
-            # 4个分支输出合并：(17, 17, 768)
-
-            # 第五个6系模块：Mixed_6e
-            # 最后一个6系模块, 和上两个6系模块也完全一致,
-            # with tf.variable_scope('Mixed_6e'):
-            #     with tf.variable_scope('Branch_0'):
-            #         branch_0 = slim.conv2d(net, 192, [1, 1], scope='Conv2d_0a_1x1')
-            #     with tf.variable_scope('Branch_1'):
-            #         branch_1 = slim.conv2d(net, 160, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_1 = slim.conv2d(branch_1, 160, [1, 7], scope='Conv2d_0b_1x7')
-            #         branch_1 = slim.conv2d(branch_1, 192, [7, 1], scope='Conv2d_0c_7x1')
-            #     with tf.variable_scope('Branch_2'):
-            #         branch_2 = slim.conv2d(net, 160, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_2 = slim.conv2d(branch_2, 160, [7, 1], scope='Conv2d_0b_7x1')
-            #         branch_2 = slim.conv2d(branch_2, 160, [1, 7], scope='Conv2d_0c_1x7')
-            #         branch_2 = slim.conv2d(branch_2, 160, [7, 1], scope='Conv2d_0d_7x1')
-            #         branch_2 = slim.conv2d(branch_2, 192, [1, 7], scope='Conv2d_0e_1x7')
-            #     with tf.variable_scope('Branch_3'):
-            #         branch_3 = slim.avg_pool2d(net, [3, 3], scope='AvgPool_0a_3x3')
-            #         branch_3 = slim.conv2d(branch_3, 192, [1, 1], scope='Conv2d_0b_1x1')
-            #
-            #     net = tf.concat([branch_0, branch_1, branch_2, branch_3], 3)
-            # 4个分支输出合并：(17, 17, 768)
-
-            # 把经过5个6系模块后的输出存在字典中, size:(17, 17, 768)
+            
+            # 把经过2个6系模块后的输出存在字典中, size:(17, 17, 768)
             end_points['Mixed_6e'] = net
 
             # 第一个7系模块：Mixed_7a
@@ -271,62 +184,6 @@ def inception_v3_base(inputs, scope=None):
                 net = tf.concat([branch_0, branch_1, branch_2], 3)
             # 3个分支输出合并：(8, 8, 1280)
 
-            # 第二个7系模块：Mixed_7b
-            # with tf.variable_scope('Mixed_7b'):
-            #
-            #     # 分支0: 输出tensor(8, 8, 320)
-            #     with tf.variable_scope('Branch_0'):
-            #         branch_0 = slim.conv2d(net, 320, [1, 1], scope='Conv2d_0a_1x1')
-            #     # 分支1: 输出tensor(8, 8, 768)
-            #     with tf.variable_scope('Branch_1'):
-            #         branch_1 = slim.conv2d(net, 384, [1, 1], scope='Conv2d_0a_1x1')
-            #         # 先拆成两个子分支, 再合并
-            #         branch_1 = tf.concat([
-            #             slim.conv2d(branch_1, 384, [1, 3], scope='Conv2d_0b_1x3'),
-            #             slim.conv2d(branch_1, 384, [3, 1], scope='Conv2d_0b_3x1')], 3)
-            #     # 分支2: 输出tensor(8, 8, 768)
-            #     with tf.variable_scope('Branch_2'):
-            #         branch_2 = slim.conv2d(net, 448, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_2 = slim.conv2d(branch_2, 384, [3, 3], scope='Conv2d_0b_3x3')
-            #         branch_2 = tf.concat([
-            #             slim.conv2d(branch_2, 384, [1, 3], scope='Cov2d_0c_1x3'),
-            #             slim.conv2d(branch_2, 384, [3, 1], scope='Conv2d_0d_3x1')], 3)
-            #     # 分支3: 输出tensor(8, 8, 192)
-            #     with tf.variable_scope('Branch_3'):
-            #         branch_3 = slim.avg_pool2d(net, [3, 3], scope='AvgPool_0a_3x3')
-            #         branch_3 = slim.conv2d(branch_3, 192, [1, 1], scope='Conv2d_0b_1x1')
-            #
-            #     # sum(320, 768, 768, 192)
-            #     net = tf.concat([branch_0, branch_1, branch_2, branch_3], 3)
-            # 4个分支输出合并：(8, 8, 2048)
-
-            # 第三个7系模块：Mixed_7c
-            # 最后一个7系模块,和7b完全一致
-            # with tf.variable_scope('Mixed_7c'):
-            #     # 分支0: 输出tensor(8, 8, 320)
-            #     with tf.variable_scope('Branch_0'):
-            #         branch_0 = slim.conv2d(net, 320, [1, 1], scope='Conv2d_0a_1x1')
-            #     # 分支1: 输出tensor(8, 8, 768)
-            #     with tf.variable_scope('Branch_1'):
-            #         branch_1 = slim.conv2d(net, 384, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_1 = tf.concat([
-            #             slim.conv2d(branch_1, 384, [1, 3], scope='Conv2d_0b_1x3'),
-            #             slim.conv2d(branch_1, 384, [3, 1], scope='Conv2d_0c_3x1')], 3)
-            #     # 分支2: 输出tensor(8, 8, 768)
-            #     with tf.variable_scope('Branch_2'):
-            #         branch_2 = slim.conv2d(net, 448, [1, 1], scope='Conv2d_0a_1x1')
-            #         branch_2 = slim.conv2d(branch_2, 384, [3, 3], scope='Conv2d_0b_3x3')
-            #         branch_2 = tf.concat([
-            #             slim.conv2d(branch_2, 384, [1, 3], scope='Cov2d_0c_1x3'),
-            #             slim.conv2d(branch_2, 384, [3, 1], scope='Conv2d_0d_3x1')], 3)
-            #     # 分支3: 输出tensor(8, 8, 192)
-            #     with tf.variable_scope('Branch_3'):
-            #         branch_3 = slim.avg_pool2d(net, [3, 3], scope='AvgPool_0a_3x3')
-            #         branch_3 = slim.conv2d(branch_3, 192, [1, 1], scope='Conv2d_0b_1x1')
-            #
-            #     # sum(320, 768, 768, 192)
-            #     net = tf.concat([branch_0, branch_1, branch_2, branch_3], 3)
-            # 4个分支输出合并：(8, 8, 2048)
 
             return net, end_points
         # 返回结果： (8, 8, 2048)tensor, 存放6系模块组输出(17, 17, 768)tensor的字典
